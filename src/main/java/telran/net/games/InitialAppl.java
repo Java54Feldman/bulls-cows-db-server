@@ -17,7 +17,9 @@ public class InitialAppl {
 				.createContainerEntityManagerFactory(new BullsCowsPersistenceUnitInfo(), map);
 		EntityManager em = emFactory.createEntityManager();
 		Gamer gamer = em.find(Gamer.class, "gamer1");
+		Game game = em.find(Game.class, "1001");
 		System.out.println(gamer);
+		System.out.println(game);
 	}
 
 }
