@@ -7,12 +7,11 @@ import jakarta.persistence.*;
 @Table(name = "game")
 public class Game {
 	@Id
-	Long id;
-	LocalDateTime date;
-	Boolean is_finished;
-	String sequence;
+	private long id;
+	private LocalDateTime date;
+	private boolean is_finished;
+	private String sequence;
 	public Game(Long id, LocalDateTime date, Boolean isFinished, String sequence) {
-		super();
 		this.id = id;
 		this.date = date;
 		this.is_finished = isFinished;

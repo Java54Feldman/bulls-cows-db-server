@@ -1,10 +1,11 @@
 package telran.net.games;
 
-import java.util.HashMap;
-
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
 import org.hibernate.jpa.HibernatePersistenceProvider;
-
 import jakarta.persistence.*;
+
 public class InitialAppl {
 
 	public static void main(String[] args) {
@@ -16,10 +17,30 @@ public class InitialAppl {
 		EntityManagerFactory emFactory = new HibernatePersistenceProvider()
 				.createContainerEntityManagerFactory(new BullsCowsPersistenceUnitInfo(), map);
 		EntityManager em = emFactory.createEntityManager();
+		
 		Gamer gamer = em.find(Gamer.class, "gamer1");
 		Game game = em.find(Game.class, "1001");
 		System.out.println(gamer);
 		System.out.println(game);
+		
+		JpqlQueriesRepository repository = new JpqlQueriesRepository(em);
+		List<Game> games = repository.getGamesFinished(false);
+		displayResult(games);
+		
+		List<DateTimeSequence> list = repository.getDateTimeSequence(LocalTime.of(12, 0));
+		displayResult(list);
+		
+		List<Integer> listBulls = repository.getBullsInMovesGamersBornAfter(LocalDate.ofYearDay(2000, 1));
+		displayResult(listBulls);
+		
+		List<MinMaxAmount> listDistribution = repository.getDistributionGamesMoves(5);
+		displayResult(listDistribution);
+		
+	}
+
+	private static <T> void displayResult(List<T> list) {
+		list.forEach(System.out::println);
+		
 	}
 
 }
