@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 @Table(name = "game_gamer")
 public class GameGamer {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@ManyToOne
 	@JoinColumn(name = "game_id")
@@ -11,7 +12,17 @@ public class GameGamer {
 	@ManyToOne
 	@JoinColumn(name = "gamer_id")
 	private Gamer gamer;
-	private boolean is_winner;
+	@Column(name="is_winner", nullable = false)
+	private boolean isWinner;
+	
+	public GameGamer() {
+		
+	}
+	public GameGamer(boolean isWinner, Game game, Gamer gamer) {
+		this.isWinner = isWinner;
+		this.game = game;
+		this.gamer = gamer;
+	}
 	public long getId() {
 		return id;
 	}
@@ -21,16 +32,8 @@ public class GameGamer {
 	public Gamer getGamer() {
 		return gamer;
 	}
-	public boolean isIs_winner() {
-		return is_winner;
-	}
-	@Override
-	public String toString() {
-		return "GameGamer [id=" + id + 
-				", game=" + game.getId() + 
-				", gamer=" + gamer.getUsername() + 
-				", is_winner=" + is_winner + "]";
+	public boolean isWinner() {
+		return isWinner;
 	}
 			
-
 }
