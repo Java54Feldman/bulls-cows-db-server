@@ -1,7 +1,5 @@
 package telran.net.games;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import jakarta.persistence.*;
@@ -18,29 +16,24 @@ public class InitialAppl {
 				.createContainerEntityManagerFactory(new BullsCowsPersistenceUnitInfo(), map);
 		EntityManager em = emFactory.createEntityManager();
 		
-		Gamer gamer = em.find(Gamer.class, "gamer1");
-		Game game = em.find(Game.class, "1001");
-		System.out.println(gamer);
-		System.out.println(game);
-		
 		JpqlQueriesRepository repository = new JpqlQueriesRepository(em);
-		List<Game> games = repository.getGamesFinished(false);
+		
+		List<Game> games = repository.getGamesAvgAgeGreater(60);
 		displayResult(games);
 		
-		List<DateTimeSequence> list = repository.getDateTimeSequence(LocalTime.of(12, 0));
-		displayResult(list);
+		List<GameNumberMove> gamesMoves = repository.getGamesWinnerMovesLess(5);
+		displayResult(gamesMoves);
 		
-		List<Integer> listBulls = repository.getBullsInMovesGamersBornAfter(LocalDate.ofYearDay(2000, 1));
-		displayResult(listBulls);
+		List<String> gamers = repository.getGamersWithMovesLess(4);
+		displayResult(gamers);
 		
-		List<MinMaxAmount> listDistribution = repository.getDistributionGamesMoves(5);
-		displayResult(listDistribution);
-		
+		List<GameAvgNumberMove> gamesAvgMoves = repository.getGamesWithAvgMoves();
+		displayResult(gamesAvgMoves);
 	}
 
 	private static <T> void displayResult(List<T> list) {
 		list.forEach(System.out::println);
-		
+		System.out.println(list.size());
 	}
 
 }

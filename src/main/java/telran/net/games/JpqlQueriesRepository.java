@@ -55,4 +55,59 @@ public class JpqlQueriesRepository {
 		List<MinMaxAmount> res = query.setParameter("interval", interval).getResultList();
 		return res;
 	}
+	
+	public List<Game> getGamesAvgAgeGreater(int age) {
+//		select * from game where id in 
+//		(select game_id from game_gamer join gamer on gamer_id = username
+//		group by game_id having avg(extract (year from age(birthdate))) > 60)
+		int bornYear = LocalDate.now().minusYears(age).getYear();
+		TypedQuery<Game> query = em.createQuery(
+				"select gameRes from Game gameRes where id in "
+				+ "(select game.id from GameGamer group by game.id "
+				+ "having avg(extract(year from gamer.birthdate)) < ?1)",
+				Game.class);
+		List<Game> res = query.setParameter(1, bornYear).getResultList();
+		return res;
+	}
+	public List<GameNumberMove> getGamesWinnerMovesLess(int numberMoves) {
+//		select game_id, count(*)as moves from game_gamer
+//		join move on game_gamer.id=game_gamer_id where is_winner
+//		group by game_id having count(*) < 5
+		TypedQuery<GameNumberMove> query = em.createQuery(
+				"select gameGamer.game.id as gameId, count(*) from "
+				+ "Move where gameGamer.is_winner = true "
+				+ "group by gameId having count(*) < ?1",
+				GameNumberMove.class);
+		List<GameNumberMove> res = query.setParameter(1, numberMoves).getResultList();
+		return res;
+	}
+	public List<String> getGamersWithMovesLess(int numberMoves) {
+//		select distinct gamer_id from game_gamer
+//		join move on game_gamer.id = game_gamer_id
+//		group by game_id, gamer_id having count(*) < 4
+		TypedQuery<String> query = em.createQuery(
+				"select distinct gameGamer.gamer.username from Move "
+				+ "group by gameGamer.game.id, gameGamer.gamer.username "
+				+ "having count(*) < :numberMoves",
+				String.class);
+		List<String> res = query.setParameter("numberMoves", numberMoves).getResultList();
+		return res;				
+	}
+	public List<GameAvgNumberMove> getGamesWithAvgMoves() {
+//		select game_id, round(avg(moves), 1) from 
+//		(select game_id, gamer_id, count(*) moves
+//			from game_gamer	join move on game_gamer.id=game_gamer_id
+//			group by game_id, gamer_id order by game_id)
+//		group by game_id
+		TypedQuery<GameAvgNumberMove> query = em.createQuery(
+				"select gameId, round(avg(moves), 1) from "
+				+ "(select gameGamer.game.id as gameId, gameGamer.gamer.username as gamerId, count(*) as moves "
+				+ "from Move group by gameId, gamerId order by gameId) "
+				+ "group by gameId",
+				GameAvgNumberMove.class
+				);
+		List<GameAvgNumberMove> res = query.getResultList();
+		return res;
+	}
+	
 }
