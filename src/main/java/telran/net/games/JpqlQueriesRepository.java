@@ -56,17 +56,16 @@ public class JpqlQueriesRepository {
 		return res;
 	}
 	
-	public List<Game> getGamesAvgAgeGreater(int age) {
+	public List<Game> getGamesAvgAgeGreater(double age) {
 //		select * from game where id in 
 //		(select game_id from game_gamer join gamer on gamer_id = username
 //		group by game_id having avg(extract (year from age(birthdate))) > 60)
-		int bornYear = LocalDate.now().minusYears(age).getYear();
 		TypedQuery<Game> query = em.createQuery(
 				"select gameRes from Game gameRes where id in "
 				+ "(select game.id from GameGamer group by game.id "
-				+ "having avg(extract(year from gamer.birthdate)) < ?1)",
+				+ "having avg(extract(year from current_date) - extract(year from gamer.birthdate)) > ?1)",
 				Game.class);
-		List<Game> res = query.setParameter(1, bornYear).getResultList();
+		List<Game> res = query.setParameter(1, age).getResultList();
 		return res;
 	}
 	public List<GameNumberMove> getGamesWinnerMovesLess(int numberMoves) {
