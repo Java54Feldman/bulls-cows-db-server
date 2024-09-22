@@ -35,5 +35,9 @@ public class GameGamer {
 	public boolean isWinner() {
 		return isWinner;
 	}
-			
+	public void setWinner(boolean isWinner) {
+		this.isWinner = isWinner;
+	}
+		
+	
 }

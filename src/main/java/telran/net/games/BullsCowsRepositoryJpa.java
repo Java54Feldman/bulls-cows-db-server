@@ -79,26 +79,26 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 
 	@Override
 	public boolean isGameFinished(long id) {
-		// TODO Auto-generated method stub
-		return false;
+		Game game = getGame(id);
+		return game.isFinished();
 	}
 
 	@Override
 	public void setIsFinished(long gameId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setGameGamerWinner(long gameId, String userName) {
-		// TODO Auto-generated method stub
-
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+		Game game = getGame(gameId);
+		game.setFinished(true);
+		transaction.commit();
 	}
 
 	@Override
 	public List<Long> getGameIdsNotStarted() {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<Long> query = em.createQuery(
+				"select id from Game where date_time is null",
+				Long.class);
+		List<Long> res = query.getResultList();
+		return res;
 	}
 
 	@Override
@@ -117,31 +117,46 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 		Gamer gamer = getGamer(username);
 		GameGamer gameGamer = new GameGamer(false, game, gamer);
 		createObject(gameGamer);
-
 	}
 
 	@Override
 	public void createGameGamerMove(MoveDto moveDto) {
-		
-
+		GameGamer gameGamer = getGameGamer(moveDto.gameId(), moveDto.username());
+		Move move = new Move(moveDto.sequence(), moveDto.bulls(), moveDto.cows(), gameGamer);
+		createObject(move);
 	}
 
 	@Override
 	public List<MoveData> getAllGameGamerMoves(long gameId, String username) {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<MoveData> query = em.createQuery(
+				"select sequence, bulls, cows from Move "
+				+ "where gameGamer.game.id=?1 and gameGamer.gamer.username=?2", 
+				MoveData.class);
+		List<MoveData> res = query.setParameter(1, gameId).setParameter(2, username).getResultList();
+		return res;
 	}
 
 	@Override
 	public void setWinner(long gameId, String username) {
-		// TODO Auto-generated method stub
+		GameGamer gameGamer = getGameGamer(gameId, username);
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+		gameGamer.setWinner(true);
+		transaction.commit();
+	}
 
+	private GameGamer getGameGamer(long gameId, String username) {
+		TypedQuery<GameGamer> query = em.createQuery(
+				"select gg from GameGamer gg where game.id=?1 and gamer.username=?2",
+				GameGamer.class);
+		GameGamer gameGamer = query.setParameter(1, gameId).setParameter(2, username).getSingleResult();
+		return gameGamer;
 	}
 
 	@Override
 	public boolean isWinner(long gameId, String username) {
-		// TODO Auto-generated method stub
-		return false;
+		GameGamer gameGamer = getGameGamer(gameId, username);
+		return gameGamer.isWinner();
 	}
 
 }

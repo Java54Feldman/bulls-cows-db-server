@@ -1,15 +1,9 @@
 package telran.net.games;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.*;
-
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepositoryTest {
@@ -92,6 +86,4 @@ public class RepositoryTest {
 		assertTrue(repository.isWinner(gameId, gamerUsername));
 	}
 	
-
-
 }

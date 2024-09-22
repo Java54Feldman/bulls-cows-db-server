@@ -12,7 +12,6 @@ public interface BullsCowsRepository {
 	void setStartDate(long gameId, LocalDateTime dateTime);
 	boolean isGameFinished(long id);
 	void setIsFinished(long gameId);
-	void setGameGamerWinner(long gameId, String userName);
 	List<Long> getGameIdsNotStarted();
 	List<String> getGameGamers(long id);
 	void createGameGamer(long gameId, String username);
