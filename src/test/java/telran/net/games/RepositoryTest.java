@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.*;
 import java.util.*;
 import org.junit.jupiter.api.*;
+import telran.net.games.exceptions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RepositoryTest {
@@ -31,6 +32,8 @@ public class RepositoryTest {
 		repository.createNewGamer(gamerUsername, LocalDate.of(2000, 1, 1));
 		Gamer gamer = repository.getGamer(gamerUsername);
 		assertNotNull(gamer);
+		assertThrowsExactly(GamerAlreadyExistsException.class, () ->
+				repository.createNewGamer(gamerUsername, LocalDate.of(2000, 1, 1)));
 		
 	}
 	@Order(3)
@@ -52,7 +55,6 @@ public class RepositoryTest {
 		repository.setStartDate(gameId, LocalDateTime.now());
 		assertTrue(repository.isGameStarted(gameId));
 	}
-	
 	@Order(6)
 	@Test
 	void createGameGamerMoveAllGameGamersMovesTest() {
@@ -84,6 +86,38 @@ public class RepositoryTest {
 	void setWinnerTest() {
 		repository.setWinner(gameId, gamerUsername);
 		assertTrue(repository.isWinner(gameId, gamerUsername));
+	}
+	@Test
+	void gameNotFoundTest() {
+		assertThrowsExactly(GameNotFoundException.class, 
+				() -> repository.getGame(1000));
+	}
+	@Test
+	void gamerNotFoundTest() {
+		assertThrowsExactly(GamerNotFoundException.class, 
+				() -> repository.getGamer("kuku"));
+	}
+	@Order(11)
+	@Test
+	void getGameIdsNotStartedTest() {
+		List<Long> ids = repository.getGameIdsNotStarted();
+		assertTrue(ids.isEmpty());
+		List<Long> expected = new ArrayList<>(3);
+		expected.add(repository.createNewGame("1234"));
+		expected.add(repository.createNewGame("1234"));
+		List<Long> actual = repository.getGameIdsNotStarted();
+		assertIterableEquals(expected, actual);
+	}
+	@Test
+	void gameGamerDuplicationTest() {
+		assertThrowsExactly(GameGamerAlreadyExistsException.class,
+				() -> repository.createGameGamer(gameId, gamerUsername));
+	}
+	@Test
+	void gameGamerNotFoundTest() {
+		assertThrowsExactly(GameGamerNotFoundException.class,
+				() -> repository.createGameGamerMove
+		(new MoveDto(1000l, gamerUsername, "1243", 2, 2)));
 	}
 	
 }

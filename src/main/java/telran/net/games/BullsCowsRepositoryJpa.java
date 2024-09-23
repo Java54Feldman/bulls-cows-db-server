@@ -7,9 +7,7 @@ import org.hibernate.jpa.HibernatePersistenceProvider;
 
 import jakarta.persistence.*;
 import jakarta.persistence.spi.PersistenceUnitInfo;
-import telran.net.games.exceptions.GameNotFoundException;
-import telran.net.games.exceptions.GamerAlreadyExistsException;
-import telran.net.games.exceptions.GamerNotFoundException;
+import telran.net.games.exceptions.*;
 
 public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	private EntityManager em;
@@ -46,9 +44,14 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	}
 	private <T> void createObject(T obj) {
 		EntityTransaction transaction = em.getTransaction();
-		transaction.begin();
-		em.persist(obj); 
-		transaction.commit();
+		try {
+			transaction.begin();
+			em.persist(obj); 
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			throw e;
+		}
 	}
 
 	@Override
@@ -95,7 +98,7 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	@Override
 	public List<Long> getGameIdsNotStarted() {
 		TypedQuery<Long> query = em.createQuery(
-				"select id from Game where date_time is null",
+				"select id from Game where dateTime is null",
 				Long.class);
 		List<Long> res = query.getResultList();
 		return res;
@@ -113,10 +116,14 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 
 	@Override
 	public void createGameGamer(long gameId, String username) {
-		Game game = getGame(gameId);
-		Gamer gamer = getGamer(username);
-		GameGamer gameGamer = new GameGamer(false, game, gamer);
-		createObject(gameGamer);
+		try {
+			Game game = getGame(gameId);
+			Gamer gamer = getGamer(username);
+			GameGamer gameGamer = new GameGamer(false, game, gamer);
+			createObject(gameGamer);
+		} catch (Exception e) {
+			throw new GameGamerAlreadyExistsException(gameId, username);
+		}
 	}
 
 	@Override
@@ -149,7 +156,10 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 		TypedQuery<GameGamer> query = em.createQuery(
 				"select gg from GameGamer gg where game.id=?1 and gamer.username=?2",
 				GameGamer.class);
-		GameGamer gameGamer = query.setParameter(1, gameId).setParameter(2, username).getSingleResult();
+		GameGamer gameGamer = query.setParameter(1, gameId).setParameter(2, username).getSingleResultOrNull();
+		if(gameGamer == null) {
+			throw new GameGamerNotFoundException(gameId, username);
+		}
 		return gameGamer;
 	}
 

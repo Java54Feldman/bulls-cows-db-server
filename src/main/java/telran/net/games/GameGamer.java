@@ -1,7 +1,8 @@
 package telran.net.games;
 import jakarta.persistence.*;
 @Entity
-@Table(name = "game_gamer")
+@Table(name = "game_gamer", uniqueConstraints = 
+{@UniqueConstraint(columnNames = {"game_id", "gamer_id"})})
 public class GameGamer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
