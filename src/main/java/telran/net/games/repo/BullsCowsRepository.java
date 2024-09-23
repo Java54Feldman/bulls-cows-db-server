@@ -1,7 +1,12 @@
-package telran.net.games;
+package telran.net.games.repo;
 
 import java.time.*;
 import java.util.List;
+
+import telran.net.games.entities.Game;
+import telran.net.games.entities.Gamer;
+import telran.net.games.model.MoveData;
+import telran.net.games.model.MoveDto;
 
 public interface BullsCowsRepository {
 	Game getGame(long id);

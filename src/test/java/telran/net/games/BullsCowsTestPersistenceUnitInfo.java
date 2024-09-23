@@ -3,6 +3,8 @@ package telran.net.games;
 import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
+import telran.net.games.config.BullsCowsPersistenceUnitInfo;
+
 public class BullsCowsTestPersistenceUnitInfo extends BullsCowsPersistenceUnitInfo {
 	@Override
 	public DataSource getNonJtaDataSource() {
