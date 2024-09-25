@@ -1,4 +1,4 @@
-package telran.net.games.exception;
+package telran.net.games.exceptions;
 
 @SuppressWarnings("serial")
 public class NoGamerInGameException extends IllegalStateException {
