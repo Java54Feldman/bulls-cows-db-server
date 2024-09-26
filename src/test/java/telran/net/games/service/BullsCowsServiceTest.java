@@ -25,16 +25,17 @@ class BullsCowsServiceTest {
 		BullsCowsGameRunner bcRunner = new BullsCowsGameRunner(N_DIGITS);
 		bcService = new BullsCowsServiceImpl(repository, bcRunner);
 	}
-	static long gameIdNormalFlow = bcService.createGame();
-	static long gameIdAlternativeFlow = bcService.createGame();
+	static long gameIdNormalFlow;
+	static long gameIdAltFlow;
 	static String gamerUsernameNormalFlow = "gamer1";
 	static String gamerUsernameAlternativeFlow = "gamer99";
 
     @Test
     @Order(1)
     void createGameTest() {
+    	gameIdNormalFlow = bcService.createGame();
+    	gameIdAltFlow = bcService.createGame();
         Game game = repository.getGame(gameIdNormalFlow);
-        assertNotNull(game);
         assertNull(game.getDate());
         assertFalse(game.isFinished());
     }
@@ -53,18 +54,20 @@ class BullsCowsServiceTest {
     @Order(3)
     void gamerJoinGameAndGetGameGamersTest() {
         bcService.gamerJoinGame(gameIdNormalFlow, gamerUsernameNormalFlow);
-        List<String> gamers = bcService.getGameGamers(gameIdNormalFlow);
-        assertEquals(1, gamers.size());
-        assertEquals(gamerUsernameNormalFlow, gamers.get(0));
+		runGamersTest(gameIdNormalFlow, gamerUsernameNormalFlow);
 
         bcService.registerGamer(gamerUsernameAlternativeFlow, LocalDate.of(1980, 11, 1));
-        bcService.gamerJoinGame(gameIdAlternativeFlow, gamerUsernameAlternativeFlow);
-        gamers = bcService.getGameGamers(gameIdAlternativeFlow);
-        assertEquals(1, gamers.size());
-        assertEquals(gamerUsernameAlternativeFlow, gamers.get(0));
-
+        bcService.gamerJoinGame(gameIdAltFlow, gamerUsernameAlternativeFlow);
+        runGamersTest(gameIdAltFlow, gamerUsernameAlternativeFlow);
+        
         assertThrowsExactly(GameNotFoundException.class, () -> bcService.getGameGamers(1000L));
     }
+
+	private void runGamersTest(long gameId, String username) {
+		List<String> gamers = bcService.getGameGamers(gameId);
+        assertEquals(1, gamers.size());
+        assertEquals(username, gamers.get(0));
+	}
 
     @Test
     @Order(4)
@@ -85,9 +88,9 @@ class BullsCowsServiceTest {
         assertThrowsExactly(GameNotFoundException.class, () -> bcService.startGame(1000L));
         assertEquals(2, bcService.getNotStartedGames().size()); // Two games left not started
 
-        bcService.startGame(gameIdAlternativeFlow);
-        assertThrowsExactly(GameAlreadyStartedException.class, () -> bcService.startGame(gameIdAlternativeFlow));
-        assertThrowsExactly(GameAlreadyStartedException.class, () -> bcService.gamerJoinGame(gameIdAlternativeFlow, gamerUsernameNormalFlow));
+        bcService.startGame(gameIdAltFlow);
+        assertThrowsExactly(GameAlreadyStartedException.class, () -> bcService.startGame(gameIdAltFlow));
+        assertThrowsExactly(GameAlreadyStartedException.class, () -> bcService.gamerJoinGame(gameIdAltFlow, gamerUsernameNormalFlow));
         assertEquals(1, bcService.getNotStartedGames().size()); // One game left not started
     }
 
@@ -109,21 +112,21 @@ class BullsCowsServiceTest {
     @Test
     @Order(7)
     void moveProcessingAlternativeFlowTest() {
-        String toBeGuessed = ((BullsCowsServiceImpl) bcService).getSequence(gameIdAlternativeFlow);
-        assertThrowsExactly(IncorrectMoveSequenceException.class, () -> bcService.moveProcessing("1111", gameIdAlternativeFlow, gamerUsernameAlternativeFlow));
-        List<MoveData> moves = bcService.moveProcessing(toBeGuessed, gameIdAlternativeFlow, gamerUsernameAlternativeFlow);
+        String toBeGuessed = ((BullsCowsServiceImpl) bcService).getSequence(gameIdAltFlow);
+        assertThrowsExactly(IncorrectMoveSequenceException.class, () -> bcService.moveProcessing("1111", gameIdAltFlow, gamerUsernameAlternativeFlow));
+        List<MoveData> moves = bcService.moveProcessing(toBeGuessed, gameIdAltFlow, gamerUsernameAlternativeFlow);
         assertEquals(1, moves.size());
         assertEquals(new MoveData(toBeGuessed, 4, 0), moves.get(0));
-        assertTrue(repository.isGameFinished(gameIdAlternativeFlow));
-        assertTrue(repository.isWinner(gameIdAlternativeFlow, gamerUsernameAlternativeFlow));
-        assertThrowsExactly(GameFinishedException.class, () -> bcService.moveProcessing("1234", gameIdAlternativeFlow, gamerUsernameAlternativeFlow));
+        assertTrue(repository.isGameFinished(gameIdAltFlow));
+        assertTrue(repository.isWinner(gameIdAltFlow, gamerUsernameAlternativeFlow));
+        assertThrowsExactly(GameFinishedException.class, () -> bcService.moveProcessing("1234", gameIdAltFlow, gamerUsernameAlternativeFlow));
     }
 
     @Test
     @Order(8)
     void gameOverTest() {
         assertTrue(bcService.gameOver(gameIdNormalFlow));
-        assertTrue(bcService.gameOver(gameIdAlternativeFlow));
+        assertTrue(bcService.gameOver(gameIdAltFlow));
         assertFalse(bcService.gameOver(bcService.createGame()));
     }
 
