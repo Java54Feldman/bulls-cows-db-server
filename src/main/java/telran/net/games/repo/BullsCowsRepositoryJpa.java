@@ -17,17 +17,17 @@ import telran.net.games.model.MoveDto;
 
 public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	private EntityManager em;
-	public BullsCowsRepositoryJpa(PersistenceUnitInfo persistenceUnit,
-			HashMap<String, Object> hibernateProperties) {
+
+	public BullsCowsRepositoryJpa(PersistenceUnitInfo persistenceUnit, HashMap<String, Object> hibernateProperties) {
 		EntityManagerFactory emf = new HibernatePersistenceProvider()
 				.createContainerEntityManagerFactory(persistenceUnit, hibernateProperties);
 		em = emf.createEntityManager();
 	}
-	
+
 	@Override
 	public Game getGame(long id) {
 		Game game = em.find(Game.class, id);
-		if(game == null) {
+		if (game == null) {
 			throw new GameNotFoundException(id);
 		}
 		return game;
@@ -36,7 +36,7 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	@Override
 	public Gamer getGamer(String username) {
 		Gamer gamer = em.find(Gamer.class, username);
-		if(gamer == null) {
+		if (gamer == null) {
 			throw new GamerNotFoundException(username);
 		}
 		return gamer;
@@ -48,11 +48,12 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 		createObject(game);
 		return game.getId();
 	}
+
 	private <T> void createObject(T obj) {
 		EntityTransaction transaction = em.getTransaction();
 		try {
 			transaction.begin();
-			em.persist(obj); 
+			em.persist(obj);
 			transaction.commit();
 		} catch (Exception e) {
 			transaction.rollback();
@@ -103,28 +104,23 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 
 	@Override
 	public List<Long> getGameIdsNotStarted() {
-		TypedQuery<Long> query = em.createQuery(
-				"select id from Game where dateTime is null",
-				Long.class);
+		TypedQuery<Long> query = em.createQuery("select id from Game where dateTime is null", Long.class);
 		List<Long> res = query.getResultList();
 		return res;
 	}
 
 	@Override
 	public List<String> getGameGamers(long id) {
-		TypedQuery<String> query = em.createQuery(
-				"select gamer.username from GameGamer "
-				+ "where game.id=?1",
-				String.class
-				);
+		TypedQuery<String> query = em.createQuery("select gamer.username from GameGamer " + "where game.id=?1",
+				String.class);
 		return query.setParameter(1, id).getResultList();
 	}
 
 	@Override
 	public void createGameGamer(long gameId, String username) {
+		Game game = getGame(gameId);
+		Gamer gamer = getGamer(username);
 		try {
-			Game game = getGame(gameId);
-			Gamer gamer = getGamer(username);
 			GameGamer gameGamer = new GameGamer(false, game, gamer);
 			createObject(gameGamer);
 		} catch (Exception e) {
@@ -141,10 +137,8 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 
 	@Override
 	public List<MoveData> getAllGameGamerMoves(long gameId, String username) {
-		TypedQuery<MoveData> query = em.createQuery(
-				"select sequence, bulls, cows from Move "
-				+ "where gameGamer.game.id=?1 and gameGamer.gamer.username=?2", 
-				MoveData.class);
+		TypedQuery<MoveData> query = em.createQuery("select sequence, bulls, cows from Move "
+				+ "where gameGamer.game.id=?1 and gameGamer.gamer.username=?2", MoveData.class);
 		List<MoveData> res = query.setParameter(1, gameId).setParameter(2, username).getResultList();
 		return res;
 	}
@@ -159,11 +153,10 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	}
 
 	private GameGamer getGameGamer(long gameId, String username) {
-		TypedQuery<GameGamer> query = em.createQuery(
-				"select gg from GameGamer gg where game.id=?1 and gamer.username=?2",
-				GameGamer.class);
+		TypedQuery<GameGamer> query = em
+				.createQuery("select gg from GameGamer gg where game.id=?1 and gamer.username=?2", GameGamer.class);
 		GameGamer gameGamer = query.setParameter(1, gameId).setParameter(2, username).getSingleResultOrNull();
-		if(gameGamer == null) {
+		if (gameGamer == null) {
 			throw new GameGamerNotFoundException(gameId, username);
 		}
 		return gameGamer;

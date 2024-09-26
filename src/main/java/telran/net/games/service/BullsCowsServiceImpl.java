@@ -66,6 +66,7 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 	 * GameNotFoundException
 	 * GameAlreadyStartedException
 	 * GamerNotFoundException
+	 * GameGamerAlreadyExistsException
 	 */
 	public void gamerJoinGame(long gameId, String username) {
 		checkIsGameAlreadyStarted(gameId);
@@ -97,27 +98,34 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 	 * GamerNotFoundException
 	 * GameNotStartedException (extends IllegalStateException)
 	 * GameFinishedException (extends IllegalStateException)
+	 * GameGamerNotFoundExeption
 	 */
-	public List<MoveData> moveProcessing(String sequence, long gameId, String username) {
-		if(!bcRunner.checkGuess(sequence)) {
-			throw new IncorrectMoveSequenceException(sequence);
+	public List<MoveData> moveProcessing(String moveSequence, long gameId, String username) {
+		if(!bcRunner.checkGuess(moveSequence)) {
+			throw new IncorrectMoveSequenceException(moveSequence, bcRunner.nDigits);
 		}
-		bcRepository.getGamer(username);
+		bcRepository.getGamer(username); //only for checking whether the gamer exists
 		if(!bcRepository.isGameStarted(gameId)) {
 			throw new GameNotStartedException(gameId);
 		}
 		if(bcRepository.isGameFinished(gameId)) {
 			throw new GameFinishedException(gameId);
 		}
-		String toBeGuessed = getSequence(gameId);
-		MoveData lastMove = bcRunner.moveProcessing(sequence, toBeGuessed);
-		bcRepository.createGameGamerMove(new MoveDto(gameId, username, lastMove.sequence(), lastMove.bulls(), lastMove.cows()));
-		List<MoveData> result = bcRepository.getAllGameGamerMoves(gameId, username);
-		if(bcRunner.checkGameFinished(lastMove)) {
-			bcRepository.setIsFinished(gameId);
-			bcRepository.setWinner(gameId, username);
+		String toBeGuessedSequence = getSequence(gameId);
+		MoveData moveData = bcRunner.moveProcessing(moveSequence, toBeGuessedSequence);
+		MoveDto moveDto = new MoveDto(gameId, username, moveSequence,
+				moveData.bulls(), moveData.cows());
+		bcRepository.createGameGamerMove(moveDto);
+				List<MoveData> result = bcRepository.getAllGameGamerMoves(gameId, username);
+		if(bcRunner.checkGameFinished(moveData)) {
+			finishGame(gameId, username);
 		}
 		return result;
+	}
+	private void finishGame(long gameId, String username) {
+		bcRepository.setIsFinished(gameId);
+		bcRepository.setWinner(gameId, username);
+		
 	}
 	@Override
 	/**
@@ -139,7 +147,6 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 		return bcRepository.getGameGamers(gameId);
 	}
 	/**
-	 * Only for testing
 	 * Implied that the test class resides at the same package (to access the method)
 	 * 
 	 * @param gameId
