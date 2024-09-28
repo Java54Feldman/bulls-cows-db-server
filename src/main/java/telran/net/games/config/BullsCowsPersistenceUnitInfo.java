@@ -29,25 +29,21 @@ public class BullsCowsPersistenceUnitInfo implements PersistenceUnitInfo {
 
 	@Override
 	public String getScopeAnnotationName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<String> getQualifierAnnotationNames() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public PersistenceUnitTransactionType getTransactionType() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public DataSource getJtaDataSource() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -63,19 +59,16 @@ public class BullsCowsPersistenceUnitInfo implements PersistenceUnitInfo {
 
 	@Override
 	public List<String> getMappingFileNames() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<URL> getJarFileUrls() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public URL getPersistenceUnitRootUrl() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -90,49 +83,41 @@ public class BullsCowsPersistenceUnitInfo implements PersistenceUnitInfo {
 
 	@Override
 	public boolean excludeUnlistedClasses() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public SharedCacheMode getSharedCacheMode() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ValidationMode getValidationMode() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Properties getProperties() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getPersistenceXMLSchemaVersion() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ClassLoader getClassLoader() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void addTransformer(ClassTransformer transformer) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public ClassLoader getNewTempClassLoader() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
