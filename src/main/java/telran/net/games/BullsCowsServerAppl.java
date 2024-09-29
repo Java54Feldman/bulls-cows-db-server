@@ -2,16 +2,14 @@ package telran.net.games;
 
 import java.util.HashMap;
 
-import telran.games.controller.BullsCowsProtocol;
 import telran.net.*;
 import telran.net.games.config.BullsCowsPersistenceUnitInfo;
+import static telran.net.games.config.BullsCowsConfigurationProperties.*;
+import telran.net.games.controller.BullsCowsProtocol;
 import telran.net.games.repo.*;
 import telran.net.games.service.*;
 
 public class BullsCowsServerAppl {
-
-	private static final int PORT = 5000;
-	private static final int N_DIGITS = 4;
 
 	public static void main(String[] args) {
 		Protocol bullsCowsProtocol = getBullsCowsProtocol();

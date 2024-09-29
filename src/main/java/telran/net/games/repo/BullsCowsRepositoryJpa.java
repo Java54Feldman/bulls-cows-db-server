@@ -168,4 +168,34 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 		return gameGamer.isWinner();
 	}
 
+	@Override
+	public List<Long> getNotStartedGamesWithGamer(String username) {
+		TypedQuery<Long> query = em.createQuery(
+				"select game.id from GameGamer where game.dateTime is null and gamer.username=?1",
+				Long.class);
+		List<Long> res = query.setParameter(1, username).getResultList();
+		return res;
+	}
+
+	@Override
+	public List<Long> getNotStartedGamesWithNoGamer(String username) {
+		TypedQuery<Long> query = em.createQuery(
+				"select id from Game where dateTime is null and id not in "
+				+ "(select game.id from GameGamer where gamer.username=?1)",
+				Long.class);
+		List<Long> res = query.setParameter(1, username).getResultList();
+		return res;
+	}
+
+	@Override
+	public List<Long> getStartedGamesWithGamer(String username) {
+		TypedQuery<Long> query = em.createQuery(
+				"select game.id from GameGamer where game.dateTime is not null "
+				+ "and game.isFinished=false and gamer.username=?1",
+				Long.class);
+		List<Long> res = query.setParameter(1, username).getResultList();
+		return res;
+	}
+	
+
 }

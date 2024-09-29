@@ -1,17 +1,11 @@
 package telran.net.games.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.List;
 
-import telran.net.games.entities.Game;
-import telran.net.games.exceptions.GameAlreadyStartedException;
-import telran.net.games.exceptions.GameFinishedException;
-import telran.net.games.exceptions.GameNotStartedException;
-import telran.net.games.exceptions.IncorrectMoveSequenceException;
-import telran.net.games.exceptions.NoGamerInGameException;
-import telran.net.games.model.MoveData;
-import telran.net.games.model.MoveDto;
+import telran.net.games.entities.*;
+import telran.net.games.exceptions.*;
+import telran.net.games.model.*;
 import telran.net.games.repo.BullsCowsRepository;
 
 public class BullsCowsServiceImpl implements BullsCowsService {
@@ -22,6 +16,15 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 	public BullsCowsServiceImpl(BullsCowsRepository bcRepository, BullsCowsGameRunner bcRunner) {
 		this.bcRepository = bcRepository;
 		this.bcRunner = bcRunner;
+	}
+	/**
+	 * Login gamer
+	 * returns username
+	 */
+	@Override 
+	public String loginGamer(String username) {
+		Gamer gamer = bcRepository.getGamer(username);
+		return gamer.getUsername();
 	}
 	@Override
 	/**
@@ -55,8 +58,8 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 	 * Exceptions:
 	 * GamerAlreadyExistsException
 	 */
-	public void registerGamer(String username, LocalDate birthDate) {
-		bcRepository.createNewGamer(username, birthDate);
+	public void registerGamer(String username, LocalDate birthdate) {
+		bcRepository.createNewGamer(username, birthdate);
 		
 	}
 	@Override
@@ -116,7 +119,7 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 		MoveDto moveDto = new MoveDto(gameId, username, moveSequence,
 				moveData.bulls(), moveData.cows());
 		bcRepository.createGameGamerMove(moveDto);
-				List<MoveData> result = bcRepository.getAllGameGamerMoves(gameId, username);
+		List<MoveData> result = bcRepository.getAllGameGamerMoves(gameId, username);
 		if(bcRunner.checkGameFinished(moveData)) {
 			finishGame(gameId, username);
 		}
@@ -156,6 +159,21 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 	String getSequence(long gameId) {
 		Game game = bcRepository.getGame(gameId);
 		return game.getSequence();
+	}
+	@Override
+	public List<Long> getNotStartedGamesWithGamer(String username) {
+		bcRepository.getGamer(username);
+		return bcRepository.getNotStartedGamesWithGamer(username);
+	}
+	@Override
+	public List<Long> getNotStartedGamesWithNoGamer(String username) {
+		bcRepository.getGamer(username);
+		return bcRepository.getNotStartedGamesWithNoGamer(username);
+	}
+	@Override
+	public List<Long> getStartedGamesWithGamer(String username) {
+		bcRepository.getGamer(username);
+		return bcRepository.getStartedGamesWithGamer(username);
 	}
 	
 }

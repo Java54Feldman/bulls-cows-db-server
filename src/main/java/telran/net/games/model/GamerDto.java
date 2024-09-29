@@ -1,18 +1,21 @@
 package telran.net.games.model;
 
+import java.time.LocalDate;
+
 import org.json.JSONObject;
 import static telran.net.games.config.BullsCowsConfigurationProperties.*;
 
-public record GameGamerDto(Long gameId, String username) {
-
+public record GamerDto(String username, LocalDate birthdate) {
+	
 	@Override
 	public String toString() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put(GAME_ID_FIELD, gameId);
 		jsonObject.put(USERNAME_FIELD, username);
+		jsonObject.put(BIRTHDATE_FIELD, birthdate);
 		return jsonObject.toString();
 	}
-	public GameGamerDto(JSONObject jsonObject) {
-		this(jsonObject.getLong(GAME_ID_FIELD), jsonObject.getString(USERNAME_FIELD));
+	public GamerDto(JSONObject jsonObject) {
+		this(jsonObject.getString(USERNAME_FIELD), LocalDate.parse(jsonObject.getString(BIRTHDATE_FIELD)));
 	}
+
 }

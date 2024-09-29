@@ -1,4 +1,4 @@
-package telran.games.controller;
+package telran.net.games.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,9 +6,7 @@ import java.util.stream.Collectors;
 import org.json.JSONObject;
 
 import telran.net.*;
-import telran.net.games.model.GameGamerDto;
-import telran.net.games.model.MoveData;
-import telran.net.games.model.SequenceGameGamerDto;
+import telran.net.games.model.*;
 import telran.net.games.service.BullsCowsService;
 
 public class BullsCowsProtocol implements Protocol {
@@ -27,9 +25,13 @@ public class BullsCowsProtocol implements Protocol {
 			response = switch (requestType) {
 			case "createGame" -> createGame(requestData);
 			case "startGame" -> startGame(requestData);
+			case "loginGamer" -> loginGamer(requestData);
 			case "registerGamer" -> registerGamer(requestData);
 			case "gamerJoinGame" -> gamerJoinGame(requestData);
 			case "getNotStartedGames" -> getNotStartedGames(requestData);
+			case "getNotStartedGamesWithGamer" -> getNotStartedGamesWithGamer(requestData);
+			case "getNotStartedGamesWithNoGamer" -> getNotStartedGamesWithNoGamer(requestData);
+			case "getStartedGamesWithGamer" -> getStartedGamesWithGamer(requestData);
 			case "moveProcessing" -> moveProcessing(requestData);
 			case "gameOver" -> gameOver(requestData);
 			case "getGameGamers" -> getGameGamers(requestData);
@@ -54,9 +56,14 @@ public class BullsCowsProtocol implements Protocol {
 		String responseString = resultsToJSON(gamers);
 		return getResponseOk(responseString);
 	}
+	private Response loginGamer(String requestData) {
+		String responseString = bcService.loginGamer(requestData);
+		return getResponseOk(responseString);
+	}
 	private Response registerGamer(String requestData) {
-		//TODO просто геймер
-		String responseString = null;
+		GamerDto gamer = new GamerDto(new JSONObject(requestData));
+		bcService.registerGamer(gamer.username(), gamer.birthdate());
+		String responseString = "";
 		return getResponseOk(responseString);
 	}
 	private Response gamerJoinGame(String requestData) {
@@ -66,8 +73,8 @@ public class BullsCowsProtocol implements Protocol {
 		return getResponseOk(responseString);
 	}
 	private Response getNotStartedGames(String requestData) {
-		//TODO
-		String responseString = null;
+		List<Long> games = bcService.getNotStartedGames();
+		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}
 	private Response moveProcessing(String requestData) {
@@ -80,13 +87,29 @@ public class BullsCowsProtocol implements Protocol {
 		return getResponseOk(responseString);
 	}
 	private Response gameOver(String requestData) {
-		//TODO
-		String responseString = null;
+		long gameId = Long.parseLong(requestData);
+		String responseString = bcService.gameOver(gameId) ? "true" : "false";
 		return getResponseOk(responseString);
 	}
 	private Response getGameGamers(String requestData) {
-		//TODO
-		String responseString = null;
+		long gameId = Long.parseLong(requestData);
+		List<String> gamers = bcService.getGameGamers(gameId);
+		String responseString = resultsToJSON(gamers);
+		return getResponseOk(responseString);
+	}
+	private Response getNotStartedGamesWithGamer(String requestData) {
+		List<Long> games = bcService.getNotStartedGamesWithGamer(requestData);
+		String responseString = resultsToJSON(games);
+		return getResponseOk(responseString);
+	}
+	private Response getNotStartedGamesWithNoGamer(String requestData) {
+		List<Long> games = bcService.getNotStartedGamesWithNoGamer(requestData);
+		String responseString = resultsToJSON(games);
+		return getResponseOk(responseString);
+	}
+	private Response getStartedGamesWithGamer(String requestData) {
+		List<Long> games = bcService.getStartedGamesWithGamer(requestData);
+		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}
 
@@ -94,7 +117,6 @@ public class BullsCowsProtocol implements Protocol {
 		return new Response(ResponseCode.OK, responseString);
 	}
 	private <T> String resultsToJSON(List<T> res) {
-
 		return res.stream().map(T::toString)
 				.collect(Collectors.joining(";"));
 	}

@@ -1,11 +1,9 @@
 package telran.net.games.model;
 
 import org.json.JSONObject;
+import static telran.net.games.config.BullsCowsConfigurationProperties.*;
 
 public record MoveData(String sequence, Integer bulls, Integer cows) {
-	private static final String SEQUENCE_FIELD = "sequence";
-	private static final String BULLS_FIELD = "bulls";
-	private static final String COWS_FIELD = "cows";
 
 	public MoveData(JSONObject jsonObject) {
 		this(jsonObject.getString(SEQUENCE_FIELD),
@@ -13,7 +11,10 @@ public record MoveData(String sequence, Integer bulls, Integer cows) {
 				jsonObject.getInt(COWS_FIELD));
 	}
 	public String toString() {
-		//TODO - creating JSON string from object
-		return null;
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put(SEQUENCE_FIELD, sequence);
+		jsonObj.put(BULLS_FIELD, bulls);
+		jsonObj.put(COWS_FIELD, cows);
+		return jsonObj.toString();
 	}
 }

@@ -1,11 +1,10 @@
 package telran.net.games.model;
 
 import org.json.JSONObject;
+import static telran.net.games.config.BullsCowsConfigurationProperties.*;
 
 public record SequenceGameGamerDto(String sequence, Long gameId, String username) {
-	private static final String GAME_ID_FIELD = "gameId";
-	private static final String USERNAME_FIELD = "username";
-	private static final String SEQUENCE_FIELD = "sequence";
+
 	@Override
 	public String toString() {
 		JSONObject jsonObject = new JSONObject();

@@ -129,5 +129,44 @@ class BullsCowsServiceTest {
         assertTrue(bcService.gameOver(gameIdAltFlow));
         assertFalse(bcService.gameOver(bcService.createGame()));
     }
+    
+    @Test
+    @Order(9)
+    void getNotStartedGamesWithGamerTest() {
+        long newGameId = bcService.createGame();
+        bcService.gamerJoinGame(newGameId, gamerUsernameNormalFlow);
 
+        List<Long> games = bcService.getNotStartedGamesWithGamer(gamerUsernameNormalFlow);
+        assertTrue(games.contains(newGameId));
+        assertFalse(games.contains(gameIdNormalFlow)); 
+        assertFalse(games.contains(gameIdAltFlow)); 
+
+        assertThrowsExactly(GamerNotFoundException.class, 
+            () -> bcService.getNotStartedGamesWithGamer("nonexistentGamer"));
+    }
+
+    @Test
+    @Order(10)
+    void getNotStartedGamesWithNoGamerTest() {
+        long newGameId = bcService.createGame();
+
+        List<Long> games = bcService.getNotStartedGamesWithNoGamer(gamerUsernameNormalFlow);
+        assertTrue(games.contains(newGameId));
+        assertFalse(games.contains(gameIdNormalFlow)); 
+        assertFalse(games.contains(gameIdAltFlow)); 
+
+        assertThrowsExactly(GamerNotFoundException.class, 
+            () -> bcService.getNotStartedGamesWithNoGamer("nonexistentGamer"));
+    }
+
+    @Test
+    @Order(11)
+    void getStartedGamesWithGamerTest() {
+        List<Long> games = bcService.getStartedGamesWithGamer(gamerUsernameNormalFlow);
+        assertTrue(games.contains(gameIdNormalFlow));
+        assertFalse(games.contains(gameIdAltFlow)); 
+
+        assertThrowsExactly(GamerNotFoundException.class, 
+            () -> bcService.getStartedGamesWithGamer("nonexistentGamer"));
+    }
 }
