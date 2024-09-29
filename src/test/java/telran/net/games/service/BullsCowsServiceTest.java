@@ -162,9 +162,21 @@ class BullsCowsServiceTest {
     @Test
     @Order(11)
     void getStartedGamesWithGamerTest() {
+        long newStartedGameId = bcService.createGame();
+        bcService.gamerJoinGame(newStartedGameId, gamerUsernameNormalFlow);
+        bcService.startGame(newStartedGameId);
+
+        long notStartedGameId = bcService.createGame();
+        bcService.gamerJoinGame(notStartedGameId, gamerUsernameNormalFlow);
+
         List<Long> games = bcService.getStartedGamesWithGamer(gamerUsernameNormalFlow);
-        assertTrue(games.contains(gameIdNormalFlow));
-        assertFalse(games.contains(gameIdAltFlow)); 
+        
+        assertTrue(games.contains(newStartedGameId));
+        assertFalse(games.contains(notStartedGameId));
+        assertFalse(games.contains(gameIdNormalFlow));
+        assertFalse(games.contains(gameIdAltFlow));
+
+        assertTrue(bcService.getStartedGamesWithGamer(gamerUsernameAlternativeFlow).isEmpty());
 
         assertThrowsExactly(GamerNotFoundException.class, 
             () -> bcService.getStartedGamesWithGamer("nonexistentGamer"));
