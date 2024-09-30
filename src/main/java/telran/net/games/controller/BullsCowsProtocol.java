@@ -30,7 +30,7 @@ public class BullsCowsProtocol implements Protocol {
 			case "gamerJoinGame" -> gamerJoinGame(requestData);
 			case "getNotStartedGames" -> getNotStartedGames(requestData);
 			case "getNotStartedGamesWithGamer" -> getNotStartedGamesWithGamer(requestData);
-			case "getNotStartedGamesWithNoGamer" -> getNotStartedGamesWithOutGamer(requestData);
+			case "getNotStartedGamesWithOutGamer" -> getNotStartedGamesWithOutGamer(requestData);
 			case "getStartedGamesWithGamer" -> getStartedGamesWithGamer(requestData);
 			case "moveProcessing" -> moveProcessing(requestData);
 			case "gameOver" -> gameOver(requestData);
