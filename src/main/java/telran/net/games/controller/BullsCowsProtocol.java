@@ -30,7 +30,7 @@ public class BullsCowsProtocol implements Protocol {
 			case "gamerJoinGame" -> gamerJoinGame(requestData);
 			case "getNotStartedGames" -> getNotStartedGames(requestData);
 			case "getNotStartedGamesWithGamer" -> getNotStartedGamesWithGamer(requestData);
-			case "getNotStartedGamesWithNoGamer" -> getNotStartedGamesWithNoGamer(requestData);
+			case "getNotStartedGamesWithNoGamer" -> getNotStartedGamesWithOutGamer(requestData);
 			case "getStartedGamesWithGamer" -> getStartedGamesWithGamer(requestData);
 			case "moveProcessing" -> moveProcessing(requestData);
 			case "gameOver" -> gameOver(requestData);
@@ -61,8 +61,9 @@ public class BullsCowsProtocol implements Protocol {
 		return getResponseOk(responseString);
 	}
 	private Response registerGamer(String requestData) {
-		GamerDto gamer = new GamerDto(new JSONObject(requestData));
-		bcService.registerGamer(gamer.username(), gamer.birthdate());
+		UsernameBirthdate nameDate = new UsernameBirthdate(new JSONObject(requestData));
+		bcService.registerGamer(nameDate.username(), nameDate.birthDate());UsernameBirthdate gamer = new UsernameBirthdate(new JSONObject(requestData));
+		bcService.registerGamer(gamer.username(), gamer.birthDate());
 		String responseString = "";
 		return getResponseOk(responseString);
 	}
@@ -102,7 +103,7 @@ public class BullsCowsProtocol implements Protocol {
 		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}
-	private Response getNotStartedGamesWithNoGamer(String requestData) {
+	private Response getNotStartedGamesWithOutGamer(String requestData) {
 		List<Long> games = bcService.getIdsNonStartedGamesNoGamer(requestData);
 		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
