@@ -15,8 +15,8 @@ List<Long> getNotStartedGames();
 List<MoveData> moveProcessing(String sequence, long gameId, String username);
 boolean gameOver(long gameId);
 List<String> getGameGamers(long gameId);
-List<Long> getNotStartedGamesWithGamer(String username);
-List<Long> getNotStartedGamesWithNoGamer(String username);
-List<Long> getStartedGamesWithGamer(String username);
+List<Long> getIdsNonStartedGamesGamer(String username);
+List<Long> getIdsNonStartedGamesNoGamer(String username);
+List<Long> getIdsStartedGamesGamer(String username);
 
 }

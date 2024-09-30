@@ -98,17 +98,17 @@ public class BullsCowsProtocol implements Protocol {
 		return getResponseOk(responseString);
 	}
 	private Response getNotStartedGamesWithGamer(String requestData) {
-		List<Long> games = bcService.getNotStartedGamesWithGamer(requestData);
+		List<Long> games = bcService.getIdsNonStartedGamesGamer(requestData);
 		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}
 	private Response getNotStartedGamesWithNoGamer(String requestData) {
-		List<Long> games = bcService.getNotStartedGamesWithNoGamer(requestData);
+		List<Long> games = bcService.getIdsNonStartedGamesNoGamer(requestData);
 		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}
 	private Response getStartedGamesWithGamer(String requestData) {
-		List<Long> games = bcService.getStartedGamesWithGamer(requestData);
+		List<Long> games = bcService.getIdsStartedGamesGamer(requestData);
 		String responseString = resultsToJSON(games);
 		return getResponseOk(responseString);
 	}

@@ -169,7 +169,7 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	}
 
 	@Override
-	public List<Long> getNotStartedGamesWithGamer(String username) {
+	public List<Long> getIdsNonStartedGamesGamer(String username) {
 		TypedQuery<Long> query = em.createQuery(
 				"select game.id from GameGamer where game.dateTime is null and gamer.username=?1",
 				Long.class);
@@ -178,7 +178,7 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	}
 
 	@Override
-	public List<Long> getNotStartedGamesWithNoGamer(String username) {
+	public List<Long> getIdsNonStartedGamesNoGamer(String username) {
 		TypedQuery<Long> query = em.createQuery(
 				"select id from Game where dateTime is null and id not in "
 				+ "(select game.id from GameGamer where gamer.username=?1)",
@@ -188,7 +188,7 @@ public class BullsCowsRepositoryJpa implements BullsCowsRepository {
 	}
 
 	@Override
-	public List<Long> getStartedGamesWithGamer(String username) {
+	public List<Long> getIdsStartedGamesGamer(String username) {
 		TypedQuery<Long> query = em.createQuery(
 				"select game.id from GameGamer where game.dateTime is not null "
 				+ "and game.isFinished=false and gamer.username=?1",

@@ -161,19 +161,19 @@ public class BullsCowsServiceImpl implements BullsCowsService {
 		return game.getSequence();
 	}
 	@Override
-	public List<Long> getNotStartedGamesWithGamer(String username) {
+	public List<Long> getIdsNonStartedGamesGamer(String username) {
 		bcRepository.getGamer(username);
-		return bcRepository.getNotStartedGamesWithGamer(username);
+		return bcRepository.getIdsNonStartedGamesGamer(username);
 	}
 	@Override
-	public List<Long> getNotStartedGamesWithNoGamer(String username) {
+	public List<Long> getIdsNonStartedGamesNoGamer(String username) {
 		bcRepository.getGamer(username);
-		return bcRepository.getNotStartedGamesWithNoGamer(username);
+		return bcRepository.getIdsNonStartedGamesNoGamer(username);
 	}
 	@Override
-	public List<Long> getStartedGamesWithGamer(String username) {
+	public List<Long> getIdsStartedGamesGamer(String username) {
 		bcRepository.getGamer(username);
-		return bcRepository.getStartedGamesWithGamer(username);
+		return bcRepository.getIdsStartedGamesGamer(username);
 	}
 	
 }

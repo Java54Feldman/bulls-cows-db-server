@@ -136,13 +136,13 @@ class BullsCowsServiceTest {
         long newGameId = bcService.createGame();
         bcService.gamerJoinGame(newGameId, gamerUsernameNormalFlow);
 
-        List<Long> games = bcService.getNotStartedGamesWithGamer(gamerUsernameNormalFlow);
+        List<Long> games = bcService.getIdsNonStartedGamesGamer(gamerUsernameNormalFlow);
         assertTrue(games.contains(newGameId));
         assertFalse(games.contains(gameIdNormalFlow)); 
         assertFalse(games.contains(gameIdAltFlow)); 
 
         assertThrowsExactly(GamerNotFoundException.class, 
-            () -> bcService.getNotStartedGamesWithGamer("nonexistentGamer"));
+            () -> bcService.getIdsNonStartedGamesGamer("nonexistentGamer"));
     }
 
     @Test
@@ -150,13 +150,13 @@ class BullsCowsServiceTest {
     void getNotStartedGamesWithNoGamerTest() {
         long newGameId = bcService.createGame();
 
-        List<Long> games = bcService.getNotStartedGamesWithNoGamer(gamerUsernameNormalFlow);
+        List<Long> games = bcService.getIdsNonStartedGamesNoGamer(gamerUsernameNormalFlow);
         assertTrue(games.contains(newGameId));
         assertFalse(games.contains(gameIdNormalFlow)); 
         assertFalse(games.contains(gameIdAltFlow)); 
 
         assertThrowsExactly(GamerNotFoundException.class, 
-            () -> bcService.getNotStartedGamesWithNoGamer("nonexistentGamer"));
+            () -> bcService.getIdsNonStartedGamesNoGamer("nonexistentGamer"));
     }
 
     @Test
@@ -169,16 +169,16 @@ class BullsCowsServiceTest {
         long notStartedGameId = bcService.createGame();
         bcService.gamerJoinGame(notStartedGameId, gamerUsernameNormalFlow);
 
-        List<Long> games = bcService.getStartedGamesWithGamer(gamerUsernameNormalFlow);
+        List<Long> games = bcService.getIdsStartedGamesGamer(gamerUsernameNormalFlow);
         
         assertTrue(games.contains(newStartedGameId));
         assertFalse(games.contains(notStartedGameId));
         assertFalse(games.contains(gameIdNormalFlow));
         assertFalse(games.contains(gameIdAltFlow));
 
-        assertTrue(bcService.getStartedGamesWithGamer(gamerUsernameAlternativeFlow).isEmpty());
+        assertTrue(bcService.getIdsStartedGamesGamer(gamerUsernameAlternativeFlow).isEmpty());
 
         assertThrowsExactly(GamerNotFoundException.class, 
-            () -> bcService.getStartedGamesWithGamer("nonexistentGamer"));
+            () -> bcService.getIdsStartedGamesGamer("nonexistentGamer"));
     }
 }
